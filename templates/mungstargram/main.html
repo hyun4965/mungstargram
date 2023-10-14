@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div><img style="width: 100%"
-                          src="{{ feed.image }}">
+                          src="{% get_media_prefix %}{{ feed.image }}">
                 </div>
                 <div style="display: flex; flex-direction: row; justify-content: space-between;margin: 0 20px;padding-top: 15px">
                     <div>
@@ -191,7 +191,7 @@
         let file = files[0];
         let image = files[0].name;
         let content = $('#input_feed_content').val();
-        let user_id= mungstar;
+        let user_id= "mungstar";
         let profile_image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MTJfMjAx%2FMDAxNjk0NDkwMTA4MDc1.h3bGKeKhYir2ldj-Az1xOei9q3_4jtx-5l7zqF_Vdhog.Cc_lvs1gGpQ3u5cpOunkwq7BUb3ElRsr0WlSxRLD43sg.JPEG.dlfqjsekf1%2F640px-Cervo_do_pantano.jpg&type=sc960_832"
 
         let fd = new FormData();
@@ -216,6 +216,7 @@
             },
             complete: function () {
                 console.log("complete");
+                location.replace("main")
             }
         });
     });
@@ -224,18 +225,6 @@
         .on("dragover", dragOver)
         .on("dragleave", dragOver)
         .on("drop", uploadFiles);
-
-    $('.material-icons-outlined').click(function () {
-        $('#first_modal').css({
-            display: 'none'
-        });
-        $('#second_modal').css({
-            display: 'none'
-        });
-        $(document.body).css({
-        overflow: 'auto' // 스크롤 스타일을 복구
-        });
-    });
 
 
     function dragOver(e) {
