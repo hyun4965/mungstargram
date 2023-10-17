@@ -23,7 +23,7 @@
         .box {
             width: 150px;
             height: 150px;
-            border-radius: 70%;
+            border-radius: 20px;
             overflow: hidden;
         }
 
@@ -84,11 +84,12 @@
 </nav>
 
 <div style="display: flex; flex-direction: row; text-align: center; justify-content: left;margin-left:400px; padding-top: 80px;background: whitesmoke">
+    <!-- left feedbox display -->
     <div style="width:500px;min-width: 500px; height: 1000px; margin-right: 100px">
         <!--여기서부터 피드박스-->
         {% for feed in feeds %}
             <div class="feed_box">
-                <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px">
+                <div style="display: flex; flex-direction: row; align-items: center; margin: 10px 20px">
                     <div class="box" style="width:60px; height:60px">
                         <img class="profile"
                              src="{{ feed.profile_image }}">
@@ -111,9 +112,20 @@
                 </div>
                 <div style="margin: 0 20px; text-align: left;font-size: 14px">
                     <b>{{ feed.user_id }}</b>{{ feed.content }}</div>
-                <div><input type="text" class="form-control" style="box-shadow: none;border:none;" placeholder="댓글 달기"></div>
+                <div><input type="text" class="form-control" style="box-shadow: none;border:none;" placeholder="댓글 달기">
+                </div>
             </div>
         {% endfor %}
+    </div>
+    <!-- 오른쪽 display -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; height: 400px; position: fixed; right: 0; width: 30%;">
+        <div style="background-color: white; width: 200px; border: 1px solid black;">
+            <a href="https://map.naver.com/p/search/%EB%8F%99%EB%AC%BC%EB%B3%91%EC%9B%90?placeSearchOption=fromNxList%3Dtrue%26noredirect%3D1%26entry%3Dpll"
+               style="display: block;">동물 병원</a>
+            <a href="https://search.naver.com/search.naver?sm=tab_sug.top&where=nexearch&query=%EC%9C%A0%EA%B8%B0%EB%8F%99%EB%AC%BC%EB%B3%B4%ED%98%B8%EC%84%BC%ED%84%B0&oquery=%EB%8F%99%EB%AC%BC%EB%B3%91%EC%9B%90&tqi=ifHKqlp0JXossl5b4alsssssstV-290307&acq=%EC%9C%A0%EA%B8%B0%EB%8F%99%EB%AC%BC&acr=1&qdt=0"
+               style="display: block;">유기 동물 보호 센터</a>
+
+        </div>
     </div>
     {#달력 만듬#}
     {#    <form action="#">#}
@@ -165,13 +177,23 @@
                               id="exampleFormControlTextarea1" rows="5"></textarea>
                 </div>
                 <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%">
-                    공유하기
+                    업로드
                 </button>
             </div>
         </div>
     </div>
 </div>
 <script>
+    $('#first_modal .material-icons-outlined').click(function () {
+        $('#first_modal').css({display: 'none'});
+        $(document.body).css({overflow: 'auto'});
+    });
+
+    // 모달 2 닫기
+    $('#second_modal .material-icons-outlined').click(function () {
+        $('#second_modal').css({display: 'none'});
+        $(document.body).css({overflow: 'auto'});
+    });
     let files;
 
     $('#nav_bar_add_box').click(function () {
@@ -191,8 +213,8 @@
         let file = files[0];
         let image = files[0].name;
         let content = $('#input_feed_content').val();
-        let user_id= "mungstar";
-        let profile_image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MTJfMjAx%2FMDAxNjk0NDkwMTA4MDc1.h3bGKeKhYir2ldj-Az1xOei9q3_4jtx-5l7zqF_Vdhog.Cc_lvs1gGpQ3u5cpOunkwq7BUb3ElRsr0WlSxRLD43sg.JPEG.dlfqjsekf1%2F640px-Cervo_do_pantano.jpg&type=sc960_832"
+        let user_id = "mungstar";
+        let profile_image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MTJfMjAx%2FMDAxNjk0NDkwMTA4MDc1.h3bGKeKhYir2ldj-Az1xOei9q3_4jtx-5l7zqF_Vdhog.Cc_lvs1gGpQ3u5cpOunkwq7BUb3ElRsr0WlSxRLD43sg.JPEG.dlfqjsekf1%2F640px-Cervo_do_pantano.jpg&type=sc960_832"
 
         let fd = new FormData();
 
