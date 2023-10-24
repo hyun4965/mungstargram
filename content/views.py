@@ -4,12 +4,19 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Feed
 import os
+from user.models import User
 from mungstargram.settings import MEDIA_ROOT
 from uuid import uuid4
 class Main(APIView):
     def get(self, request):
         feed_list = Feed.objects.all().order_by('-id') #select * from content_feed;
-        return render(request, 'mungstargram/main.html', context=dict(feeds=feed_list))
+        email = request.session['email']
+        if email is None:
+            return render(request, 'user/login.html')
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            return render(request,'user/login.html')
+        return render(request, 'mungstargram/main.html', context=dict(feeds=feed_list,user=user))
 
 class UploadFeed(APIView):
     def post(self, request):

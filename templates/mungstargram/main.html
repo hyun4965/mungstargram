@@ -34,15 +34,16 @@
         }
 
         .feed_box {
-            margin: 20px 0;
             border: solid 1px whitesmoke;
             background-color: white;
+            margin-bottom: 50px;
+            overflow: auto;
         }
 
         .modal_overlay {
             width: 100%;
             height: 100%;
-            position: absolute;
+            position: fixed; /* 모달을 화면 상단에 고정합니다. */
             left: 0;
             top: 0;
             display: none;
@@ -62,14 +63,16 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             width: 800px;
             height: 600px;
-            position: relative;
+            position: fixed; /* 모달을 화면 상단에 고정합니다. */
+            top: 50%; /* 모달의 상단을 화면의 중앙에 위치시킵니다. */
+            left: 50%; /* 모달의 왼쪽을 화면의 중앙에 위치시킵니다. */
+            transform: translate(-50%, -50%); /* 모달을 중앙으로 정렬합니다. */
             padding: 10px;
         }
-
     </style>
 </head>
 <body style="background: whitesmoke">
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%; ">
     <div class="container-fluid" style="justify-content: space-between; flex-wrap: nowrap; min-width: 1000px">
         <a class="navbar-brand" href="main">mungstargram</a>
         <input class="form-control me-2" style="width: 600px" type="search" placeholder="Search" aria-label="Search">
@@ -85,7 +88,7 @@
 
 <div style="display: flex; flex-direction: row; text-align: center; justify-content: left;margin-left:400px; padding-top: 80px;background: whitesmoke">
     <!-- left feedbox display -->
-    <div style="width:500px;min-width: 500px; height: 1000px; margin-right: 100px">
+    <div style="width:500px;min-width: 500px; height: 1000px; margin-right: 100px; margin-bottom: 50px;">
         <!--여기서부터 피드박스-->
         {% for feed in feeds %}
             <div class="feed_box">
@@ -118,12 +121,14 @@
         {% endfor %}
     </div>
     <!-- 오른쪽 display -->
-    <div style="display: flex; justify-content: flex-end; align-items: center; height: 400px; position: fixed; right: 0; width: 30%;">
+    <div style="display: flex; justify-content: flex-end; align-items: center; height: 400px; position: fixed; right: 0; width: 30%; ">
         <div style="background-color: white; width: 200px; border: 1px solid black;">
             <a href="https://map.naver.com/p/search/%EB%8F%99%EB%AC%BC%EB%B3%91%EC%9B%90?placeSearchOption=fromNxList%3Dtrue%26noredirect%3D1%26entry%3Dpll"
-               style="display: block;">동물 병원</a>
-            <a href="https://search.naver.com/search.naver?sm=tab_sug.top&where=nexearch&query=%EC%9C%A0%EA%B8%B0%EB%8F%99%EB%AC%BC%EB%B3%B4%ED%98%B8%EC%84%BC%ED%84%B0&oquery=%EB%8F%99%EB%AC%BC%EB%B3%91%EC%9B%90&tqi=ifHKqlp0JXossl5b4alsssssstV-290307&acq=%EC%9C%A0%EA%B8%B0%EB%8F%99%EB%AC%BC&acr=1&qdt=0"
-               style="display: block;">유기 동물 보호 센터</a>
+               style="display: block; font-weight: 500;">동물 병원</a>
+            <a href="https://www.animal.go.kr/front/index.do"
+               style="display: block; font-weight: 500;">반려동물 등록 센터</a>
+            <a href="https://www.zooseyo.or.kr/zooseyo_or_kr.html?"
+               style="display: block; font-weight: 500;">유기 동물 센터</a>
 
         </div>
     </div>
@@ -140,7 +145,7 @@
     <div class="modal_window">
         <div style="display: flex; flex-direction: row; justify-content: space-between">
             <div style="width: 40px; background: white"></div>
-            <div>
+            <div style="text-align: center;"> <!-- 텍스트 가운데 정렬 -->
                 새 이미지 업로드
             </div>
             <div style="width: 40px; background: white">
@@ -149,7 +154,7 @@
         </div>
         <div class="img_upload_space"
              style="border-top: solid 3px whitesmoke; border:dotted; width: 778px; height: 540px;margin-top: 10px">
-            <p style="font-size: 30px; align-self:center">사진 업로드</p>
+            <p style="font-size: 30px; text-align: center;justify-content: center;">사진 업로드</p> <!-- 텍스트 가운데 정렬 -->
         </div>
     </div>
 </div>
@@ -186,25 +191,32 @@
 <script>
     $('#first_modal .material-icons-outlined').click(function () {
         $('#first_modal').css({display: 'none'});
-        $(document.body).css({overflow: 'auto'});
+        $('body').css({overflow: 'auto'});
     });
 
     // 모달 2 닫기
     $('#second_modal .material-icons-outlined').click(function () {
         $('#second_modal').css({display: 'none'});
-        $(document.body).css({overflow: 'auto'});
+        $('body').css({overflow: 'auto'});
     });
     let files;
-
+    $('#first_modal .material-icons-outlined, #second_modal .material-icons-outlined').click(function () {
+    // 모달을 닫기 전에 저장된 사진을 지우도록 처리
+    $('.img_upload_space').css({
+        "background-image": "none",
+        "outline": "none",
+    });
+    // 모달을 숨깁니다.
+    $(this).closest('.modal_overlay').css({display: 'none'});
+    $('body').css({overflow: 'auto'});
+});
     $('#nav_bar_add_box').click(function () {
         $('#first_modal').css({
             display: 'flex'
         });
-
-        $(document.body).css({
+        $('body').css({
             overflow: 'hidden'
         });
-
     });
 
     $('#feed_create_button').click(function () {
@@ -214,7 +226,7 @@
         let image = files[0].name;
         let content = $('#input_feed_content').val();
         let user_id = "mungstar";
-        let profile_image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MTJfMjAx%2FMDAxNjk0NDkwMTA4MDc1.h3bGKeKhYir2ldj-Az1xOei9q3_4jtx-5l7zqF_Vdhog.Cc_lvs1gGpQ3u5cpOunkwq7BUb3ElRsr0WlSxRLD43sg.JPEG.dlfqjsekf1%2F640px-Cervo_do_pantano.jpg&type=sc960_832"
+        let profile_image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MTJfMjAx%2FMDAxNjk4MA5kYhFT1OzkCwMAKwaJ5BCJoCf3V1OxLmH3Bw0Dij6KiP9DtbJojVv7KUL7zqF_Vdhog.Cc_lvs1gGpQ3u5cpOunkwq7BUb3ElRsr0WlSxRLD43sg.JPEG.dlfqjsekf1%2F640px-Cervo_do_pantano.jpg&type=sc960_832"
 
         let fd = new FormData();
 
@@ -247,7 +259,6 @@
         .on("dragover", dragOver)
         .on("dragleave", dragOver)
         .on("drop", uploadFiles);
-
 
     function dragOver(e) {
         e.stopPropagation();
@@ -308,6 +319,5 @@
 <!--
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
--->
 </body>
 </html>
