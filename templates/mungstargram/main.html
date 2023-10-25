@@ -72,16 +72,39 @@
     </style>
 </head>
 <body style="background: whitesmoke">
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%; ">
-    <div class="container-fluid" style="justify-content: space-between; flex-wrap: nowrap; min-width: 1000px">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%; z-index: 999">
+    <div class="container-fluid"
+         style="display: flex; justify-content: space-between; align-items: center; min-width: 1000px;">
         <a class="navbar-brand" href="main">mungstargram</a>
         <input class="form-control me-2" style="width: 600px" type="search" placeholder="Search" aria-label="Search">
-        <div>
-            <span class="material-icons">assignment</span>
-            <span class="material-icons">pets</span>
-            <span class="material-icons">cruelty_free</span>
-            <span class="material-icons">calendar_month</span>
-            <span id="nav_bar_add_box" class="material-icons">add_box</span>
+        <div style="display: flex; align-items: center;">
+            <div>
+                <span class="material-icons">assignment</span>
+                <span class="material-icons">pets</span>
+                <span class="material-icons">cruelty_free</span>
+                <span class="material-icons">calendar_month</span>
+            </div>
+            <span id="nav_bar_add_box" class="material-icons" style="padding-bottom: 3px">add_box</span>
+
+            <div class="dropdown">
+                <a href="#" role="button" id="dropdownMenuLink"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="box" style="width: 25px; height: 25px">
+
+                        <img class="profile"
+                             src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAzMjNfMTky%2FMDAxNjc5NTAxNDk4OTA0.uRHogDljnvS8l9cB7OPEWmzaxF63aXA_mtsQDMRfv7Yg.mcujsMc1G7ySnV9pw6HyGlLol-KVo_3zqAVs29-C9Mwg.JPEG.only_mhjh%2FIMG_3155.JPG&type=sc960_832">
+
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu" style="left:-158px" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="/content/profile">글 목록</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/user/logout">LogOut</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
@@ -201,15 +224,15 @@
     });
     let files;
     $('#first_modal .material-icons-outlined, #second_modal .material-icons-outlined').click(function () {
-    // 모달을 닫기 전에 저장된 사진을 지우도록 처리
-    $('.img_upload_space').css({
-        "background-image": "none",
-        "outline": "none",
+        // 모달을 닫기 전에 저장된 사진을 지우도록 처리
+        $('.img_upload_space').css({
+            "background-image": "none",
+            "outline": "none",
+        });
+        // 모달을 숨깁니다.
+        $(this).closest('.modal_overlay').css({display: 'none'});
+        $('body').css({overflow: 'auto'});
     });
-    // 모달을 숨깁니다.
-    $(this).closest('.modal_overlay').css({display: 'none'});
-    $('body').css({overflow: 'auto'});
-});
     $('#nav_bar_add_box').click(function () {
         $('#first_modal').css({
             display: 'flex'
