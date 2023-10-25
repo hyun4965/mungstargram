@@ -18,13 +18,13 @@
     <!-- Jquery -->
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-    <title>Hello, world!</title>
+    <title>profile</title>
 
     <style>
         .box {
             width: 150px;
             height: 150px;
-            border-radius: 70%;
+            border-radius: 20px;
             overflow: hidden;
         }
 
@@ -35,15 +35,16 @@
         }
 
         .feed_box {
-            margin: 20px 0;
-            border: solid 1px gray;
-            background-color: white
+            border: solid 1px whitesmoke;
+            background-color: white;
+            margin-bottom: 50px;
+            overflow: auto;
         }
 
         .modal_overlay {
             width: 100%;
             height: 100%;
-            position: absolute;
+            position: fixed; /* 모달을 화면 상단에 고정합니다. */
             left: 0;
             top: 0;
             display: none;
@@ -63,7 +64,10 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             width: 800px;
             height: 600px;
-            position: relative;
+            position: fixed; /* 모달을 화면 상단에 고정합니다. */
+            top: 50%; /* 모달의 상단을 화면의 중앙에 위치시킵니다. */
+            left: 50%; /* 모달의 왼쪽을 화면의 중앙에 위치시킵니다. */
+            transform: translate(-50%, -50%); /* 모달을 중앙으로 정렬합니다. */
             padding: 10px;
         }
     </style>
@@ -72,7 +76,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%; z-index: 999">
     <div class="container-fluid"
          style="display: flex; justify-content: space-between; align-items: center; min-width: 1000px;">
-        <a class="navbar-brand" href="main">mungstargram</a>
+        <a class="navbar-brand" href="/main">mungstargram</a>
         <input class="form-control me-2" style="width: 600px" type="search" placeholder="Search" aria-label="Search">
         <div style="display: flex; align-items: center;">
             <div>
@@ -89,8 +93,7 @@
                     <div class="box" style="width: 25px; height: 25px">
 
                         <img class="profile"
-                             src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAzMjNfMTky%2FMDAxNjc5NTAxNDk4OTA0.uRHogDljnvS8l9cB7OPEWmzaxF63aXA_mtsQDMRfv7Yg.mcujsMc1G7ySnV9pw6HyGlLol-KVo_3zqAVs29-C9Mwg.JPEG.only_mhjh%2FIMG_3155.JPG&type=sc960_832">
-
+                             src="{% get_media_prefix %}{{ user.profile_image }}">
                     </div>
                 </a>
 
@@ -105,17 +108,227 @@
         </div>
     </div>
 </nav>
-<div style="display: flex; flex-direction: row;justify-content: center">
-    <div>
-        프로필 사진
+<div style="display: flex; flex-direction: row;text-align: center; justify-content: center;padding-top: 60px; background-color:whitesmoke">
+    <div style="padding: 20px 60px">
+        <div class="box" style="width: 175px; height: 175px">
+            <img class="profile"
+                 src="{% get_media_prefix %}{{ user.profile_image }}">
+        </div>
     </div>
-    <div>
-        텍스트들
+    <div style="display:flex;text-align: left; font-size: 20px">
+            <div style="font-size: 26px; margin-right: 40px;margin-top: 20px;">
+                <b>{{ user.nickname }}</b>
+            </div>
+            <div>
+                <button id="button_profile_upload" style="margin-right: 40px;margin-left: 300px;border:3px dotted deeppink;"> 프로필 사진 편집(click)</button>
+                <input type="file" id="input_fileupload" onchange="profile_upload();" style="display: none" />
+            </div>
+
     </div>
 </div>
 
+<!-- 첫번째 모달 -->
+<div id="first_modal" class="modal_overlay">
+    <div class="modal_window">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="width: 40px; background: white"></div>
+            <div style="text-align: center;"> <!-- 텍스트 가운데 정렬 -->
+                새 이미지 업로드
+            </div>
+            <div style="width: 40px; background: white">
+                <span class="material-icons-outlined">close</span>
+            </div>
+        </div>
+        <div class="img_upload_space"
+             style="border-top: solid 3px whitesmoke; border:dotted; width: 778px; height: 540px;margin-top: 10px">
+            <p style="font-size: 30px; text-align: center;justify-content: center;">사진 업로드</p> <!-- 텍스트 가운데 정렬 -->
+        </div>
+    </div>
+</div>
 
+<!-- 두번째 모달 -->
+<div id="second_modal" class="modal_overlay">
+    <div class="modal_window">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="width: 40px"></div>
+            <div>
+                새 이미지 업로드
+            </div>
+            <div style="width: 40px">
+                <span class="material-icons-outlined">close</span>
+            </div>
+        </div>
 
+        <div style="border-top: solid 1px; display: flex; flex-direction: row;margin-top: 10px">
+            <div class="img_upload_space" style="width: 500px; height: 540px;">
+
+            </div>
+            <div style="border-left: solid 1px whitesmoke">
+                <div>
+                    <textarea id="input_feed_content" class="form-control" style="width: 276px; height: 400px"
+                              id="exampleFormControlTextarea1" rows="5"></textarea>
+                </div>
+                <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%">
+                    업로드
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $('#first_modal .material-icons-outlined').click(function () {
+        $('#first_modal').css({display: 'none'});
+        $('body').css({overflow: 'auto'});
+    });
+
+    // 모달 2 닫기
+    $('#second_modal .material-icons-outlined').click(function () {
+        $('#second_modal').css({display: 'none'});
+        $('body').css({overflow: 'auto'});
+    });
+    let files;
+    $('#first_modal .material-icons-outlined, #second_modal .material-icons-outlined').click(function () {
+        // 모달을 닫기 전에 저장된 사진을 지우도록 처리
+        $('.img_upload_space').css({
+            "background-image": "none",
+            "outline": "none",
+        });
+        // 모달을 숨깁니다.
+        $(this).closest('.modal_overlay').css({display: 'none'});
+        $('body').css({overflow: 'auto'});
+    });
+    $('#nav_bar_add_box').click(function () {
+        $('#first_modal').css({
+            display: 'flex'
+        });
+        $('body').css({
+            overflow: 'hidden'
+        });
+    });
+
+    $('#feed_create_button').click(function () {
+        alert("피드가 업로드 되었습니다.");
+
+        let file = files[0];
+        let image = files[0].name;
+        let content = $('#input_feed_content').val();
+        let user_id = "{{ user.nickname }}";
+        let profile_image = "{{ user.profile_image }}";
+
+        let fd = new FormData();
+
+        fd.append('file', file);
+        fd.append('image', image);
+        fd.append('content', content);
+        fd.append('user_id', user_id);
+        fd.append('profile_image', profile_image);
+
+        $.ajax({
+            url: "/content/upload",
+            data: fd,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log("success");
+            },
+            error: function (request, status, error) {
+                console.log("error");
+            },
+            complete: function () {
+                console.log("complete");
+                location.replace("main")
+            }
+        });
+    });
+
+    $('.img_upload_space')
+        .on("dragover", dragOver)
+        .on("dragleave", dragOver)
+        .on("drop", uploadFiles);
+
+    function dragOver(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (e.type == "dragover") {
+            $(e.target).css({
+                "background-color": "black",
+                "outline-offset": "-20px"
+            });
+        } else {
+            $(e.target).css({
+                "outline-offset": "-10px"
+            });
+        }
+    }
+
+    function uploadFiles(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        files = e.target.files || e.dataTransfer.files;
+        if (files.length > 1) {
+            alert('하나만 올려라.');
+            return;
+        }
+
+        if (files[0].type.match(/image.*/)) {
+            $('#first_modal').css({
+                display: 'none'
+            });
+            $('#second_modal').css({
+                display: 'flex'
+            });
+
+            $('.img_upload_space').css({
+                "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+                "outline": "none",
+                "background-size": "100%",
+                "background-repeat": "no-repeat",
+                "background-position": "center"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    }
+        $('#button_profile_upload').click(function (){
+        $('#input_fileupload').click();
+    });
+
+    function profile_upload(){
+        let file = $('#input_fileupload')[0].files[0];
+
+        let email = "{{ user.email }}";
+
+        let fd = new FormData();
+
+        fd.append('file', file);
+        fd.append('email', email);
+
+        $.ajax({
+            url: "/user/profile/upload",
+            data: fd,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+                location.replace("/content/profile");
+            }
+        });
+
+    }
+</script>
 <!-- Optional JavaScript; choose one of the two! -->
 
 <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -129,6 +342,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 -->
 </body>
-
-
 </html>
