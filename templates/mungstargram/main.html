@@ -22,6 +22,7 @@
     <title>mungstargram</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
         .box {
             width: 150px;
             height: 150px;
@@ -128,27 +129,52 @@
                 <div style="display: flex; flex-direction: row; align-items: center; margin: 10px 20px;padding-left: 10px">
                     <div class="box" style="width:60px; height:60px">
                         <img class="profile"
-                             src="{% get_media_prefix %}{{ user.profile_image }}">
+                             src="{% get_media_prefix %}{{ feed.profile_image }}">
                     </div>
                     <div style="padding-left: 10px">
-                        {{ feed.user_id }}
+                        {{ feed.nickname }}
                     </div>
                 </div>
                 <div><img style="width: 100%"
                           src="{% get_media_prefix %}{{ feed.image }}">
                 </div>
                 <div style="display: flex; flex-direction: row; justify-content: space-between;margin: 0 20px;padding-top: 15px">
+
                     <div>
-                        <span class="material-icons">thumb_up</span>
-                        <span class="material-icons">chat_bubble</span>
+                        <span id="favorite_{{ feed.id }}" feed_id = "{{ feed.id }}"
+                              class="favorite material-icons-outlined"
+                              style="color: red;cursor: pointer">{% if feed.is_liked %}
+                            favorite{% else %}favorite_border{% endif %}</span>
                     </div>
                     <div>
-                        <span class="material-icons">star</span>
+                        <span id="bookmark_{{ feed.id }}" feed_id="{{ feed.id }}" class="bookmark material-icons-outlined" style="cursor: pointer">
+                            {% if feed.is_marked %}
+                            bookmark
+                            {% else %}
+                            bookmark_border
+                            {% endif %}
+                        </span>
+
                     </div>
                 </div>
-                <div style="margin: 0 20px; text-align: left;font-size: 14px">
-                    <b>{{ feed.user_id }}</b>{{ feed.content }}</div>
-                <div><input type="text" class="form-control" style="box-shadow: none;border:none;" placeholder="댓글 달기">
+                <div style="margin: 0 20px;text-align: left;font-size: 14px"><b> {{ feed.like_count }}명</b>이
+                    좋아합니다.
+                </div>
+
+                <div id="reply_list_{{ feed.id }}">
+                    {% for reply in feed.reply_list %}
+                        <div style="margin: 0 20px;text-align: left;font-size: 14px">
+                            <b>{{ reply.nickname }}</b> {{ reply.reply_content }}</div>
+                    {% endfor %}
+                </div>
+                <div style="display:flex;flex-direction: row;align-items: center; border-top: solid 1px black ">
+                    <input id="reply_{{ feed.id }}" type="text" class="form-control"
+                           style="box-shadow: none; border: none; outline: none"
+                           placeholder="여기에 댓글 달기">
+                    <div feed_id="{{ feed.id }}" class="upload_reply"
+                         style="width: 100px;color:mediumpurple; font-weight: bold">
+                        댓글 달기
+                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -162,15 +188,8 @@
                style="display: block; font-weight: 500;">반려동물 등록 센터</a>
             <a href="https://www.zooseyo.or.kr/zooseyo_or_kr.html?"
                style="display: block; font-weight: 500;">유기 동물 센터</a>
-
         </div>
     </div>
-    {#달력 만듬#}
-    {#    <form action="#">#}
-    {##}
-    {#        <h3>시간 지정하기</h3>#}
-    {#        <input type="datetime-local">#}
-    {#    </form>#}
 </div>
 
 <!-- 첫번째 모달 -->
@@ -222,52 +241,137 @@
     </div>
 </div>
 <script>
-    $('#first_modal .material-icons-outlined').click(function () {
-        $('#first_modal').css({display: 'none'});
-        $('body').css({overflow: 'auto'});
+
+    $(".bookmark").click(function (event) {
+        let feed_id = event.target.attributes.getNamedItem('feed_id').value;
+        let bookmark_id = event.target.id;
+        let bookmark_text = $.trim($('#' + bookmark_id).html());
+        if (bookmark_text == 'bookmark') {
+            $('#' + bookmark_id).html('bookmark_border');
+        } else {
+            $('#' + bookmark_id).html('bookmark');
+        }
+
+        $.ajax({
+            url: "/content/bookmark",
+            data: {
+                feed_id: feed_id,
+                bookmark_text: bookmark_text
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+            }
+        });
     });
 
-    // 모달 2 닫기
-    $('#second_modal .material-icons-outlined').click(function () {
-        $('#second_modal').css({display: 'none'});
-        $('body').css({overflow: 'auto'});
-    });
-    let files;
-    $('#first_modal .material-icons-outlined, #second_modal .material-icons-outlined').click(function () {
-        // 모달을 닫기 전에 저장된 사진을 지우도록 처리
-        $('.img_upload_space').css({
-            "background-image": "none",
-            "outline": "none",
+
+    $(".favorite").click(function (event) {
+        let feed_id = event.target.attributes.getNamedItem('feed_id').value;
+        let favorite_id = event.target.id;
+        console.log(favorite_id);
+        let favorite_text = $.trim($('#' + favorite_id).html());
+        console.log(favorite_text);
+        if (favorite_text == 'favorite') {
+            $('#' + favorite_id).html('favorite_border');
+        } else {
+            $('#' + favorite_id).html('favorite');
+        }
+
+        $.ajax({
+            url: "/content/like",
+            data: {
+                feed_id: feed_id,
+                favorite_text: favorite_text
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+            }
         });
-        // 모달을 숨깁니다.
-        $(this).closest('.modal_overlay').css({display: 'none'});
-        $('body').css({overflow: 'auto'});
     });
+
+    $(".upload_reply").click(function (event) {
+        let feed_id = event.target.attributes.getNamedItem('feed_id').value;
+        let reply_id = 'reply_' + feed_id;
+        let reply_content = $('#' + reply_id).val();
+
+        if (reply_content.length <= 0) {
+            alert("댓글을 입력하세요");
+            return 0;
+        }
+
+        $.ajax({
+            url: "/content/reply",
+            data: {
+                feed_id: feed_id,
+                reply_content: reply_content
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+                alert("댓글 성공");
+                $("#reply_list_" + feed_id).append("<div style='margin: 0 20px;text-align: left;font-size: 14px'><b>{{ user.nickname }}</b> " + reply_content + "</div>")
+                {#location.replace('/main');#}
+
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+                $('#' + reply_id).val('');
+            }
+        });
+
+    });
+
+    $(".modal_close").click(function () {
+        $('#first_modal').css({
+            display: 'none'
+        });
+        $('#second_modal').css({
+            display: 'none'
+        });
+    });
+
+    let files;
+
     $('#nav_bar_add_box').click(function () {
         $('#first_modal').css({
             display: 'flex'
         });
-        $('body').css({
+
+        $(document.body).css({
             overflow: 'hidden'
         });
+
     });
 
     $('#feed_create_button').click(function () {
-        alert("피드가 업로드 되었습니다.");
+        alert("공유하기 눌렀다.");
 
         let file = files[0];
         let image = files[0].name;
         let content = $('#input_feed_content').val();
-        let user_id = "{{ user.nickname }}";
-        let profile_image = "{{ user.profile_image }}";
 
         let fd = new FormData();
 
         fd.append('file', file);
         fd.append('image', image);
         fd.append('content', content);
-        fd.append('user_id', user_id);
-        fd.append('profile_image', profile_image);
 
         $.ajax({
             url: "/content/upload",
@@ -276,14 +380,14 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                console.log("success");
+                console.log("성공");
             },
             error: function (request, status, error) {
-                console.log("error");
+                console.log("에러");
             },
             complete: function () {
-                console.log("complete");
-                location.replace("main")
+                console.log("완료");
+                location.replace("/main");
             }
         });
     });
@@ -313,14 +417,16 @@
         e.stopPropagation();
         e.preventDefault();
 
-        e.dataTransfer = e.originalEvent.dataTransfer;
+        e.dataTransfer = e.originalEvent.dataTransfer; //2
         files = e.target.files || e.dataTransfer.files;
+        console.log("뭔가 파일을 올렸네??" + files[0].name);
         if (files.length > 1) {
             alert('하나만 올려라.');
             return;
         }
 
         if (files[0].type.match(/image.*/)) {
+
             $('#first_modal').css({
                 display: 'none'
             });
@@ -339,7 +445,10 @@
             alert('이미지가 아닙니다.');
             return;
         }
+
     }
+
+
 </script>
 <!-- Optional JavaScript; choose one of the two! -->
 
@@ -352,5 +461,6 @@
 <!--
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+-->
 </body>
 </html>
