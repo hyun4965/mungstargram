@@ -46,7 +46,7 @@
         .modal_overlay {
             width: 100%;
             height: 100%;
-            position: fixed; /* 모달을 화면 상단에 고정합니다. */
+            position: fixed;
             left: 0;
             top: 0;
             display: none;
@@ -66,10 +66,10 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             width: 800px;
             height: 600px;
-            position: fixed; /* 모달을 화면 상단에 고정합니다. */
-            top: 50%; /* 모달의 상단을 화면의 중앙에 위치시킵니다. */
-            left: 50%; /* 모달의 왼쪽을 화면의 중앙에 위치시킵니다. */
-            transform: translate(-50%, -50%); /* 모달을 중앙으로 정렬합니다. */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             padding: 10px;
         }
     </style>
@@ -79,19 +79,18 @@
     <div class="container-fluid"
          style="display: flex; justify-content: space-between; align-items: center; min-width: 1000px;">
         <a class="navbar-brand" href="main">mungstargram</a>
-        <input class="form-control me-2" style="width: 600px" type="search" placeholder="Search" aria-label="Search">
     </div>
 </nav>
 <!--왼쪽 display-->
 <div style="display: flex; justify-content: flex-start; align-items: center; height: 400px; position: fixed; left: 0; width: 30%; ">
-    <div style="background-color: white; width: 100px; height: 160px; border: 1px solid black;">
+    <div style="background-color: white; width: 120px; height: 160px; border: 1px solid black;">
         <div style="display: flex; align-items: center;">
             <div style="margin-top: 5px">
+                <span class="material-icons">assignment</span>
+                <span style="font-family: 'Roboto Mono', monospace">자유게시판</span>
+                <br>
                 <span class="material-icons">pets</span>
                 <span style="font-family: 'Roboto Mono', monospace"> 유기동물</span>
-                <br>
-                <span class="material-icons">cruelty_free</span>
-                <span style="font-family: 'Roboto Mono', monospace"> 입양</span>
                 <br>
                 <span class="material-icons">calendar_month</span>
                 <span style="font-family: 'Roboto Mono', monospace"> 달력</span>
@@ -108,7 +107,7 @@
                         </div>
                     </a>
                     <ul class="dropdown-menu" style="left:-158px" aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" href="/content/profile">글 목록</a></li>
+                        <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -141,17 +140,18 @@
                 <div style="display: flex; flex-direction: row; justify-content: space-between;margin: 0 20px;padding-top: 15px">
 
                     <div>
-                        <span id="favorite_{{ feed.id }}" feed_id = "{{ feed.id }}"
+                        <span id="favorite_{{ feed.id }}" feed_id="{{ feed.id }}"
                               class="favorite material-icons-outlined"
                               style="color: red;cursor: pointer">{% if feed.is_liked %}
                             favorite{% else %}favorite_border{% endif %}</span>
                     </div>
                     <div>
-                        <span id="bookmark_{{ feed.id }}" feed_id="{{ feed.id }}" class="bookmark material-icons-outlined" style="cursor: pointer">
+                        <span id="bookmark_{{ feed.id }}" feed_id="{{ feed.id }}"
+                              class="bookmark material-icons-outlined" style="cursor: pointer">
                             {% if feed.is_marked %}
-                            bookmark
+                                bookmark
                             {% else %}
-                            bookmark_border
+                                bookmark_border
                             {% endif %}
                         </span>
 
@@ -200,7 +200,7 @@
             <div style="text-align: center;"> <!-- 텍스트 가운데 정렬 -->
                 새 이미지 업로드
             </div>
-            <div style="width: 40px; background: white">
+            <div style="width: 40px; background: white" class="modal_close">
                 <span class="material-icons-outlined">close</span>
             </div>
         </div>
@@ -219,7 +219,7 @@
             <div>
                 새 이미지 업로드
             </div>
-            <div style="width: 40px">
+            <div style="width: 40px" class="modal_close">
                 <span class="material-icons-outlined">close</span>
             </div>
         </div>
@@ -293,6 +293,7 @@
             method: "POST",
             success: function (data) {
                 console.log("성공");
+                location.replace('/main');
             },
             error: function (request, status, error) {
                 console.log("에러");
@@ -324,7 +325,7 @@
                 console.log("성공");
                 alert("댓글 성공");
                 $("#reply_list_" + feed_id).append("<div style='margin: 0 20px;text-align: left;font-size: 14px'><b>{{ user.nickname }}</b> " + reply_content + "</div>")
-                {#location.replace('/main');#}
+                location.replace('/main');
 
             },
             error: function (request, status, error) {
@@ -338,6 +339,7 @@
 
     });
 
+    // 모달 닫기 기능 추가
     $(".modal_close").click(function () {
         $('#first_modal').css({
             display: 'none'
@@ -345,8 +347,8 @@
         $('#second_modal').css({
             display: 'none'
         });
+        $('body').css('overflow', 'auto');
     });
-
     let files;
 
     $('#nav_bar_add_box').click(function () {
