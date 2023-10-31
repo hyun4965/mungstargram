@@ -5,3 +5,21 @@
 + 프로필 페이지 만들기 + 프로필 변경하기
 + 좋아요, 댓글, 북마크 기능까지 완료
 + 프로필 들어가면 내 게시물,좋아요,북마크 기능 보이게 하기
+# 가상환경 생성 
+python -m venv venv
+
+# 가상환경 실행
+source ./venv/Scripts/activate
+
+# 필요 package 설치
+pip install -r requirements.txt
+
+# migrate 명령어로 DB 생성
+python manage.py makemigrations
+python manage.py migrate
+
+# 서버 실행
+python manage.py runserver
+
+# 브라우져로 접속
+http://127.0.0.1:8000/main/
