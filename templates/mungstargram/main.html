@@ -79,8 +79,6 @@
     <div class="container-fluid"
          style="display: flex; justify-content: space-between; align-items: center; min-width: 1000px;">
         <a class="navbar-brand" href="/main">mungstargram</a>
-        <input class="form-control me-2" style="width: 600px" type="search" placeholder="Search" aria-label="Search">
-
     </div>
 </nav>
 <!--왼쪽 display-->
@@ -193,11 +191,8 @@
                style="display: block; font-weight: 500;">유기 동물 센터</a>
         </div>
     </div>
-    <div style="display: flex; justify-content: flex-end; align-items: center; height: 800px; position: fixed; right: 0; width: 30%; ">
-        <div style="background-color: white;height: 300px; width: 200px; border: 1px solid black;">
-            <h1>광고 자리</h1>
-        </div>
-    </div>
+<div style="position: fixed; bottom: 0; right: 0; background-color: white;height: 300px; width: 400px; border: 1px solid black; text-align: center;">
+    <h1>광고 자리</h1>
 </div>
 
 
@@ -250,7 +245,6 @@
     </div>
 </div>
 <script>
-
     $(".bookmark").click(function (event) {
         let feed_id = event.target.attributes.getNamedItem('feed_id').value;
         let bookmark_id = event.target.id;
