@@ -137,3 +137,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #커스텀 유저모델 사용
 AUTH_USER_MODEL='user.User'
+
+DATE_INPUT_FORMATS=['%d=%m-%Y']
